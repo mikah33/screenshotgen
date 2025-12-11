@@ -475,12 +475,6 @@
             100% { transform: perspective(1000px) rotateX(5deg) rotateY(-10deg); }
         }
 
-        @keyframes zoom-spin {
-            0% { transform: scale(0.9) perspective(1000px) rotateY(-15deg); }
-            50% { transform: scale(1.05) perspective(1000px) rotateY(15deg); }
-            100% { transform: scale(0.9) perspective(1000px) rotateY(-15deg); }
-        }
-
         @keyframes zoom-float {
             0% { transform: scale(0.95) translateY(0px); }
             50% { transform: scale(1.05) translateY(-15px); }
@@ -493,12 +487,6 @@
             100% { transform: translateY(0px) perspective(1000px) rotateX(5deg) rotateY(-8deg); }
         }
 
-        @keyframes float-spin {
-            0% { transform: translateY(0px) perspective(1000px) rotateY(-15deg); }
-            50% { transform: translateY(-20px) perspective(1000px) rotateY(15deg); }
-            100% { transform: translateY(0px) perspective(1000px) rotateY(-15deg); }
-        }
-
         .device-frame.animate-zoom-in { animation: zoom-in linear infinite alternate; }
         .device-frame.animate-zoom-out { animation: zoom-out linear infinite alternate; }
         .device-frame.animate-super-zoom-in { animation: super-zoom-in ease-out infinite alternate; }
@@ -506,10 +494,40 @@
         .device-frame.animate-spin { animation: spin ease-in-out infinite; }
         .device-frame.animate-float { animation: float ease-in-out infinite; }
         .device-frame.animate-tilt { animation: tilt ease-in-out infinite; }
-        .device-frame.animate-zoom-spin { animation: zoom-spin ease-in-out infinite; }
         .device-frame.animate-zoom-float { animation: zoom-float ease-in-out infinite; }
         .device-frame.animate-float-tilt { animation: float-tilt ease-in-out infinite; }
-        .device-frame.animate-float-spin { animation: float-spin ease-in-out infinite; }
+
+        /* 3D Perspective */
+        .device-frame.perspective-3d {
+            transform-style: preserve-3d;
+        }
+
+        .device-frame.perspective-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -8px;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(to right, #3a3a3a, #2a2a2a);
+            transform: rotateY(90deg);
+            transform-origin: left center;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .device-frame.perspective-3d::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to bottom, #3a3a3a, #2a2a2a);
+            transform: rotateX(-90deg);
+            transform-origin: top center;
+            border-radius: 0 0 4px 4px;
+        }
+
     </style>
 </head>
 <body>
@@ -587,27 +605,86 @@
             </div>
 
             <div class="control-group">
-                <label>Device Animation</label>
-                <select id="animationType">
-                    <option value="none">None</option>
-                    <option value="zoom-in">Zoom In</option>
-                    <option value="zoom-out">Zoom Out</option>
-                    <option value="super-zoom-in">Super Zoom In (Small to Normal)</option>
-                    <option value="super-zoom-out">Super Zoom Out (Normal to Small)</option>
-                    <option value="spin">Spin (Left to Right)</option>
-                    <option value="float">Float (Up & Down)</option>
-                    <option value="tilt">Tilt (3D Rock)</option>
-                    <option value="zoom-spin">Zoom + Spin</option>
-                    <option value="zoom-float">Zoom + Float</option>
-                    <option value="float-tilt">Float + Tilt (3D Rock)</option>
-                    <option value="float-spin">Float + Spin</option>
-                </select>
-                <div style="margin-top: 12px;">
-                    <label style="text-transform: none; font-weight: normal; color: #999; font-size: 12px;">Animation Speed</label>
+                <label>Device Animations</label>
+                <p style="color: #666; font-size: 11px; margin-bottom: 12px;">Toggle animations and adjust individual speeds</p>
+
+                <!-- Zoom -->
+                <div style="background: #2a2a2a; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; font-weight: normal; color: #fff; font-size: 13px;">
+                        <input type="checkbox" id="animZoom" style="width: 16px; height: 16px; cursor: pointer;">
+                        Zoom
+                        <select id="zoomDirection" style="margin-left: auto; padding: 2px 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; border-radius: 4px; font-size: 11px;">
+                            <option value="in">In</option>
+                            <option value="out">Out</option>
+                            <option value="in-out">In & Out</option>
+                        </select>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                        <span style="color: #555; font-size: 10px;">Slow</span>
+                        <input type="range" id="zoomSpeed" min="1" max="20" value="8" style="flex: 1; cursor: pointer;">
+                        <span style="color: #555; font-size: 10px;">Fast</span>
+                    </div>
+                </div>
+
+                <!-- Spin -->
+                <div style="background: #2a2a2a; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; font-weight: normal; color: #fff; font-size: 13px;">
+                        <input type="checkbox" id="animSpin" style="width: 16px; height: 16px; cursor: pointer;">
+                        Spin (Left & Right)
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                        <span style="color: #555; font-size: 10px;">Slow</span>
+                        <input type="range" id="spinSpeed" min="1" max="20" value="6" style="flex: 1; cursor: pointer;">
+                        <span style="color: #555; font-size: 10px;">Fast</span>
+                    </div>
+                </div>
+
+                <!-- Float -->
+                <div style="background: #2a2a2a; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; font-weight: normal; color: #fff; font-size: 13px;">
+                        <input type="checkbox" id="animFloat" style="width: 16px; height: 16px; cursor: pointer;">
+                        Float (Up & Down)
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                        <span style="color: #555; font-size: 10px;">Slow</span>
+                        <input type="range" id="floatSpeed" min="1" max="20" value="5" style="flex: 1; cursor: pointer;">
+                        <span style="color: #555; font-size: 10px;">Fast</span>
+                    </div>
+                </div>
+
+                <!-- Tilt -->
+                <div style="background: #2a2a2a; border-radius: 8px; padding: 10px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; font-weight: normal; color: #fff; font-size: 13px;">
+                        <input type="checkbox" id="animTilt" style="width: 16px; height: 16px; cursor: pointer;">
+                        Tilt (3D Rock)
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                        <span style="color: #555; font-size: 10px;">Slow</span>
+                        <input type="range" id="tiltSpeed" min="1" max="20" value="4" style="flex: 1; cursor: pointer;">
+                        <span style="color: #555; font-size: 10px;">Fast</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>3D Perspective</label>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; font-weight: normal; color: #fff;">
+                        <input type="checkbox" id="toggle3D" style="width: 18px; height: 18px; cursor: pointer;">
+                        Enable 3D View
+                    </label>
+                </div>
+                <div id="perspectiveControls" style="display: none; margin-top: 12px;">
+                    <label style="text-transform: none; font-weight: normal; color: #999; font-size: 12px;">Rotation</label>
                     <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
-                        <span style="color: #666; font-size: 12px;">Super Slow</span>
-                        <input type="range" id="animationSpeed" min="1" max="20" value="5" style="flex: 1; cursor: pointer;">
-                        <span style="color: #666; font-size: 12px;">Fast</span>
+                        <span style="color: #666; font-size: 12px;">Left</span>
+                        <input type="range" id="rotationY" min="-45" max="45" value="25" style="flex: 1; cursor: pointer;">
+                        <span style="color: #666; font-size: 12px;">Right</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+                        <span style="color: #666; font-size: 12px;">Down</span>
+                        <input type="range" id="rotationX" min="-20" max="20" value="5" style="flex: 1; cursor: pointer;">
+                        <span style="color: #666; font-size: 12px;">Up</span>
                     </div>
                 </div>
             </div>
@@ -909,8 +986,6 @@
         let currentDevice = devices.iphone15promax;
         let showHomeIndicator = true;
         let showDynamicIsland = true;
-        let currentAnimation = 'none';
-        let animationSpeed = 5;
 
         // Device selection
         deviceSelect.addEventListener('change', () => {
@@ -1057,37 +1132,200 @@
             updateScreenContent();
         });
 
-        // Animation controls
-        function updateAnimation() {
-            // Remove all animation classes
-            deviceFrame.classList.remove(
-                'animate-zoom-in', 'animate-zoom-out', 'animate-super-zoom-in', 'animate-super-zoom-out',
-                'animate-spin', 'animate-float', 'animate-tilt', 'animate-zoom-spin', 'animate-zoom-float',
-                'animate-float-tilt', 'animate-float-spin'
-            );
+        // 3D Perspective controls
+        let is3DEnabled = false;
+        let rotationX = 5;
+        let rotationY = 25;
 
-            // Add new animation class if not 'none'
-            if (currentAnimation !== 'none') {
-                deviceFrame.classList.add(`animate-${currentAnimation}`);
+        function update3DPerspective() {
+            if (is3DEnabled) {
+                deviceFrame.classList.add('perspective-3d');
+                deviceFrame.style.transform = `perspective(1000px) rotateY(${rotationY}deg) rotateX(${rotationX}deg)`;
+            } else {
+                deviceFrame.classList.remove('perspective-3d');
+                deviceFrame.style.transform = '';
             }
-
-            // Set animation duration based on speed (1=super slow 30s, 20=fast 1s)
-            // Exponential curve favoring slow speeds for creative ads
-            const duration = 30 / Math.pow(animationSpeed, 0.85); // Range: ~30s to ~1s
-            deviceFrame.style.animationDuration = `${duration}s`;
         }
 
-        document.getElementById('animationType').addEventListener('change', (e) => {
-            currentAnimation = e.target.value;
-            updateAnimation();
+        document.getElementById('toggle3D').addEventListener('change', (e) => {
+            is3DEnabled = e.target.checked;
+            document.getElementById('perspectiveControls').style.display = is3DEnabled ? 'block' : 'none';
+            update3DPerspective();
+        });
+
+        document.getElementById('rotationY').addEventListener('input', (e) => {
+            rotationY = parseInt(e.target.value);
+            update3DPerspective();
+        });
+
+        document.getElementById('rotationX').addEventListener('input', (e) => {
+            rotationX = parseInt(e.target.value);
+            update3DPerspective();
+        });
+
+        // Animation controls - mix and match system
+        let animationFrame = null;
+        const animations = {
+            zoom: { enabled: false, speed: 8, direction: 'in' },
+            spin: { enabled: false, speed: 6 },
+            float: { enabled: false, speed: 5 },
+            tilt: { enabled: false, speed: 4 }
+        };
+
+        function getAnimationDuration(speed) {
+            return 30 / Math.pow(speed, 0.85);
+        }
+
+        function updateCombinedAnimation() {
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+
+            const anyEnabled = Object.values(animations).some(a => a.enabled);
+
+            if (!anyEnabled) {
+                deviceFrame.style.transform = '';
+                deviceFrame.style.animation = '';
+                updateExportButtons();
+                return;
+            }
+
+            // Build combined CSS animation
+            const animParts = [];
+            const durationParts = [];
+
+            if (animations.zoom.enabled) {
+                const dur = getAnimationDuration(animations.zoom.speed);
+                if (animations.zoom.direction === 'in') {
+                    animParts.push('customZoomIn');
+                } else if (animations.zoom.direction === 'out') {
+                    animParts.push('customZoomOut');
+                } else {
+                    animParts.push('customZoomInOut');
+                }
+                durationParts.push(`${dur}s`);
+            }
+
+            if (animations.spin.enabled) {
+                const dur = getAnimationDuration(animations.spin.speed);
+                animParts.push('customSpin');
+                durationParts.push(`${dur}s`);
+            }
+
+            if (animations.float.enabled) {
+                const dur = getAnimationDuration(animations.float.speed);
+                animParts.push('customFloat');
+                durationParts.push(`${dur}s`);
+            }
+
+            if (animations.tilt.enabled) {
+                const dur = getAnimationDuration(animations.tilt.speed);
+                animParts.push('customTilt');
+                durationParts.push(`${dur}s`);
+            }
+
+            // Use JS animation loop for combining transforms
+            let startTime = null;
+
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+
+                let transform = 'perspective(1000px)';
+                let scale = 1;
+                let translateY = 0;
+                let rotateX = 0;
+                let rotateY = 0;
+
+                if (animations.zoom.enabled) {
+                    const dur = getAnimationDuration(animations.zoom.speed) * 1000;
+                    const progress = (elapsed % dur) / dur;
+                    if (animations.zoom.direction === 'in') {
+                        scale = 0.8 + (0.2 * progress);
+                    } else if (animations.zoom.direction === 'out') {
+                        scale = 1 - (0.2 * progress);
+                    } else {
+                        scale = 0.85 + 0.15 * Math.sin(progress * Math.PI * 2);
+                    }
+                }
+
+                if (animations.spin.enabled) {
+                    const dur = getAnimationDuration(animations.spin.speed) * 1000;
+                    const progress = (elapsed % dur) / dur;
+                    rotateY = 15 * Math.sin(progress * Math.PI * 2);
+                }
+
+                if (animations.float.enabled) {
+                    const dur = getAnimationDuration(animations.float.speed) * 1000;
+                    const progress = (elapsed % dur) / dur;
+                    translateY = -20 * Math.sin(progress * Math.PI * 2);
+                }
+
+                if (animations.tilt.enabled) {
+                    const dur = getAnimationDuration(animations.tilt.speed) * 1000;
+                    const progress = (elapsed % dur) / dur;
+                    rotateX = 5 * Math.sin(progress * Math.PI * 2);
+                    rotateY += 10 * Math.cos(progress * Math.PI * 2);
+                }
+
+                transform = `perspective(1000px) scale(${scale}) translateY(${translateY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                deviceFrame.style.transform = transform;
+
+                animationFrame = requestAnimationFrame(animate);
+            }
+
+            animationFrame = requestAnimationFrame(animate);
             updateExportButtons();
+        }
+
+        // Animation checkbox listeners
+        document.getElementById('animZoom').addEventListener('change', (e) => {
+            animations.zoom.enabled = e.target.checked;
+            updateCombinedAnimation();
+        });
+
+        document.getElementById('zoomDirection').addEventListener('change', (e) => {
+            animations.zoom.direction = e.target.value;
+            if (animations.zoom.enabled) updateCombinedAnimation();
+        });
+
+        document.getElementById('zoomSpeed').addEventListener('input', (e) => {
+            animations.zoom.speed = parseInt(e.target.value);
+        });
+
+        document.getElementById('animSpin').addEventListener('change', (e) => {
+            animations.spin.enabled = e.target.checked;
+            updateCombinedAnimation();
+        });
+
+        document.getElementById('spinSpeed').addEventListener('input', (e) => {
+            animations.spin.speed = parseInt(e.target.value);
+        });
+
+        document.getElementById('animFloat').addEventListener('change', (e) => {
+            animations.float.enabled = e.target.checked;
+            updateCombinedAnimation();
+        });
+
+        document.getElementById('floatSpeed').addEventListener('input', (e) => {
+            animations.float.speed = parseInt(e.target.value);
+        });
+
+        document.getElementById('animTilt').addEventListener('change', (e) => {
+            animations.tilt.enabled = e.target.checked;
+            updateCombinedAnimation();
+        });
+
+        document.getElementById('tiltSpeed').addEventListener('input', (e) => {
+            animations.tilt.speed = parseInt(e.target.value);
         });
 
         function updateExportButtons() {
             const exportBtn = document.getElementById('exportBtn');
             const exportAnimationBtn = document.getElementById('exportAnimationBtn');
+            const anyAnimationEnabled = Object.values(animations).some(a => a.enabled);
 
-            if (currentAnimation !== 'none') {
+            if (anyAnimationEnabled) {
                 // Animation is active - show animation export, hide PNG export
                 exportBtn.style.display = 'none';
                 exportAnimationBtn.style.display = 'block';
@@ -1097,11 +1335,6 @@
                 exportAnimationBtn.style.display = 'none';
             }
         }
-
-        document.getElementById('animationSpeed').addEventListener('input', (e) => {
-            animationSpeed = parseInt(e.target.value);
-            updateAnimation();
-        });
 
         // Live update text
         titleInput.addEventListener('input', () => {
@@ -1374,9 +1607,13 @@
             exportAnimationBtn.textContent = '⏳ Preparing...';
             exportAnimationBtn.disabled = true;
 
-            // Calculate animation duration
-            const duration = 30 / Math.pow(animationSpeed, 0.85);
-            const recordingDuration = Math.min(duration * 1000, 15000);
+            // Calculate longest animation duration from enabled animations
+            let maxDuration = 5; // default 5 seconds
+            if (animations.zoom.enabled) maxDuration = Math.max(maxDuration, getAnimationDuration(animations.zoom.speed));
+            if (animations.spin.enabled) maxDuration = Math.max(maxDuration, getAnimationDuration(animations.spin.speed));
+            if (animations.float.enabled) maxDuration = Math.max(maxDuration, getAnimationDuration(animations.float.speed));
+            if (animations.tilt.enabled) maxDuration = Math.max(maxDuration, getAnimationDuration(animations.tilt.speed));
+            const recordingDuration = Math.min(maxDuration * 1000, 15000);
 
             // Get preview size and create canvas at same aspect ratio but higher res
             const previewWidth = previewEl.offsetWidth;
@@ -1465,18 +1702,45 @@
             fileInput.value = '';
             deviceSelect.value = 'iphone15promax';
             currentDevice = devices.iphone15promax;
-            // Reset animation
-            currentAnimation = 'none';
-            animationSpeed = 5;
-            document.getElementById('animationType').value = 'none';
-            document.getElementById('animationSpeed').value = 5;
-            updateAnimation();
+            // Reset animations
+            animations.zoom.enabled = false;
+            animations.zoom.speed = 8;
+            animations.zoom.direction = 'in';
+            animations.spin.enabled = false;
+            animations.spin.speed = 6;
+            animations.float.enabled = false;
+            animations.float.speed = 5;
+            animations.tilt.enabled = false;
+            animations.tilt.speed = 4;
+            document.getElementById('animZoom').checked = false;
+            document.getElementById('animSpin').checked = false;
+            document.getElementById('animFloat').checked = false;
+            document.getElementById('animTilt').checked = false;
+            document.getElementById('zoomSpeed').value = 8;
+            document.getElementById('spinSpeed').value = 6;
+            document.getElementById('floatSpeed').value = 5;
+            document.getElementById('tiltSpeed').value = 4;
+            document.getElementById('zoomDirection').value = 'in';
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+            deviceFrame.style.transform = '';
             updateExportButtons();
             // Reset overlays
             showHomeIndicator = true;
             showDynamicIsland = true;
             document.getElementById('toggleHomeIndicator').checked = true;
             document.getElementById('toggleDynamicIsland').checked = true;
+            // Reset 3D
+            is3DEnabled = false;
+            rotationX = 5;
+            rotationY = 25;
+            document.getElementById('toggle3D').checked = false;
+            document.getElementById('perspectiveControls').style.display = 'none';
+            document.getElementById('rotationX').value = 5;
+            document.getElementById('rotationY').value = 25;
+            update3DPerspective();
             updateDevicePreview();
         });
 
