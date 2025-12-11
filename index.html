@@ -435,6 +435,55 @@
             background: #444;
             margin: 24px 0;
         }
+
+        /* Device Animations */
+        @keyframes zoom-in {
+            0% { transform: scale(0.9); }
+            100% { transform: scale(1.05); }
+        }
+
+        @keyframes zoom-out {
+            0% { transform: scale(1.05); }
+            100% { transform: scale(0.9); }
+        }
+
+        @keyframes spin {
+            0% { transform: perspective(1000px) rotateY(-15deg); }
+            50% { transform: perspective(1000px) rotateY(15deg); }
+            100% { transform: perspective(1000px) rotateY(-15deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes tilt {
+            0% { transform: perspective(1000px) rotateX(5deg) rotateY(-10deg); }
+            50% { transform: perspective(1000px) rotateX(-5deg) rotateY(10deg); }
+            100% { transform: perspective(1000px) rotateX(5deg) rotateY(-10deg); }
+        }
+
+        @keyframes zoom-spin {
+            0% { transform: scale(0.9) perspective(1000px) rotateY(-15deg); }
+            50% { transform: scale(1.05) perspective(1000px) rotateY(15deg); }
+            100% { transform: scale(0.9) perspective(1000px) rotateY(-15deg); }
+        }
+
+        @keyframes zoom-float {
+            0% { transform: scale(0.95) translateY(0px); }
+            50% { transform: scale(1.05) translateY(-15px); }
+            100% { transform: scale(0.95) translateY(0px); }
+        }
+
+        .device-frame.animate-zoom-in { animation: zoom-in linear infinite alternate; }
+        .device-frame.animate-zoom-out { animation: zoom-out linear infinite alternate; }
+        .device-frame.animate-spin { animation: spin ease-in-out infinite; }
+        .device-frame.animate-float { animation: float ease-in-out infinite; }
+        .device-frame.animate-tilt { animation: tilt ease-in-out infinite; }
+        .device-frame.animate-zoom-spin { animation: zoom-spin ease-in-out infinite; }
+        .device-frame.animate-zoom-float { animation: zoom-float ease-in-out infinite; }
     </style>
 </head>
 <body>
@@ -508,6 +557,28 @@
                 <div style="display: flex; gap: 8px;">
                     <button class="btn btn-secondary" id="playPauseBtn" style="flex: 1; margin-top: 0;">▶️ Play</button>
                     <button class="btn btn-secondary" id="restartBtn" style="flex: 1; margin-top: 0;">⏮️ Restart</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Device Animation</label>
+                <select id="animationType">
+                    <option value="none">None</option>
+                    <option value="zoom-in">Zoom In</option>
+                    <option value="zoom-out">Zoom Out</option>
+                    <option value="spin">Spin (Left to Right)</option>
+                    <option value="float">Float (Up & Down)</option>
+                    <option value="tilt">Tilt (3D Rock)</option>
+                    <option value="zoom-spin">Zoom + Spin</option>
+                    <option value="zoom-float">Zoom + Float</option>
+                </select>
+                <div style="margin-top: 12px;">
+                    <label style="text-transform: none; font-weight: normal; color: #999; font-size: 12px;">Animation Speed</label>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
+                        <span style="color: #666; font-size: 12px;">Slow</span>
+                        <input type="range" id="animationSpeed" min="1" max="10" value="5" style="flex: 1; cursor: pointer;">
+                        <span style="color: #666; font-size: 12px;">Fast</span>
+                    </div>
                 </div>
             </div>
 
@@ -807,6 +878,8 @@
         let currentDevice = devices.iphone15promax;
         let showHomeIndicator = true;
         let showDynamicIsland = true;
+        let currentAnimation = 'none';
+        let animationSpeed = 5;
 
         // Device selection
         deviceSelect.addEventListener('change', () => {
@@ -897,6 +970,34 @@
         document.getElementById('toggleDynamicIsland').addEventListener('change', (e) => {
             showDynamicIsland = e.target.checked;
             updateScreenContent();
+        });
+
+        // Animation controls
+        function updateAnimation() {
+            // Remove all animation classes
+            deviceFrame.classList.remove(
+                'animate-zoom-in', 'animate-zoom-out', 'animate-spin',
+                'animate-float', 'animate-tilt', 'animate-zoom-spin', 'animate-zoom-float'
+            );
+
+            // Add new animation class if not 'none'
+            if (currentAnimation !== 'none') {
+                deviceFrame.classList.add(`animate-${currentAnimation}`);
+            }
+
+            // Set animation duration based on speed (1=slow 6s, 10=fast 1s)
+            const duration = 7 - (animationSpeed * 0.6); // Range: 6.4s to 1s
+            deviceFrame.style.animationDuration = `${duration}s`;
+        }
+
+        document.getElementById('animationType').addEventListener('change', (e) => {
+            currentAnimation = e.target.value;
+            updateAnimation();
+        });
+
+        document.getElementById('animationSpeed').addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+            updateAnimation();
         });
 
         // Live update text
@@ -1361,6 +1462,17 @@
             fileInput.value = '';
             deviceSelect.value = 'iphone15promax';
             currentDevice = devices.iphone15promax;
+            // Reset animation
+            currentAnimation = 'none';
+            animationSpeed = 5;
+            document.getElementById('animationType').value = 'none';
+            document.getElementById('animationSpeed').value = 5;
+            updateAnimation();
+            // Reset overlays
+            showHomeIndicator = true;
+            showDynamicIsland = true;
+            document.getElementById('toggleHomeIndicator').checked = true;
+            document.getElementById('toggleDynamicIsland').checked = true;
             updateDevicePreview();
         });
 
