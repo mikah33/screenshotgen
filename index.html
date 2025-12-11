@@ -335,7 +335,7 @@
         }
 
         .device-frame.ipad .device-screen {
-            border-radius: 18px;
+            border-radius: 12px;
         }
 
         .device-screen img {
@@ -447,6 +447,16 @@
             100% { transform: scale(0.9); }
         }
 
+        @keyframes super-zoom-in {
+            0% { transform: scale(0.3); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes super-zoom-out {
+            0% { transform: scale(1); }
+            100% { transform: scale(0.3); }
+        }
+
         @keyframes spin {
             0% { transform: perspective(1000px) rotateY(-15deg); }
             50% { transform: perspective(1000px) rotateY(15deg); }
@@ -477,13 +487,29 @@
             100% { transform: scale(0.95) translateY(0px); }
         }
 
+        @keyframes float-tilt {
+            0% { transform: translateY(0px) perspective(1000px) rotateX(5deg) rotateY(-8deg); }
+            50% { transform: translateY(-20px) perspective(1000px) rotateX(-5deg) rotateY(8deg); }
+            100% { transform: translateY(0px) perspective(1000px) rotateX(5deg) rotateY(-8deg); }
+        }
+
+        @keyframes float-spin {
+            0% { transform: translateY(0px) perspective(1000px) rotateY(-15deg); }
+            50% { transform: translateY(-20px) perspective(1000px) rotateY(15deg); }
+            100% { transform: translateY(0px) perspective(1000px) rotateY(-15deg); }
+        }
+
         .device-frame.animate-zoom-in { animation: zoom-in linear infinite alternate; }
         .device-frame.animate-zoom-out { animation: zoom-out linear infinite alternate; }
+        .device-frame.animate-super-zoom-in { animation: super-zoom-in ease-out infinite alternate; }
+        .device-frame.animate-super-zoom-out { animation: super-zoom-out ease-in infinite alternate; }
         .device-frame.animate-spin { animation: spin ease-in-out infinite; }
         .device-frame.animate-float { animation: float ease-in-out infinite; }
         .device-frame.animate-tilt { animation: tilt ease-in-out infinite; }
         .device-frame.animate-zoom-spin { animation: zoom-spin ease-in-out infinite; }
         .device-frame.animate-zoom-float { animation: zoom-float ease-in-out infinite; }
+        .device-frame.animate-float-tilt { animation: float-tilt ease-in-out infinite; }
+        .device-frame.animate-float-spin { animation: float-spin ease-in-out infinite; }
     </style>
 </head>
 <body>
@@ -566,17 +592,21 @@
                     <option value="none">None</option>
                     <option value="zoom-in">Zoom In</option>
                     <option value="zoom-out">Zoom Out</option>
+                    <option value="super-zoom-in">Super Zoom In (Small to Normal)</option>
+                    <option value="super-zoom-out">Super Zoom Out (Normal to Small)</option>
                     <option value="spin">Spin (Left to Right)</option>
                     <option value="float">Float (Up & Down)</option>
                     <option value="tilt">Tilt (3D Rock)</option>
                     <option value="zoom-spin">Zoom + Spin</option>
                     <option value="zoom-float">Zoom + Float</option>
+                    <option value="float-tilt">Float + Tilt (3D Rock)</option>
+                    <option value="float-spin">Float + Spin</option>
                 </select>
                 <div style="margin-top: 12px;">
                     <label style="text-transform: none; font-weight: normal; color: #999; font-size: 12px;">Animation Speed</label>
                     <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
-                        <span style="color: #666; font-size: 12px;">Slow</span>
-                        <input type="range" id="animationSpeed" min="1" max="10" value="5" style="flex: 1; cursor: pointer;">
+                        <span style="color: #666; font-size: 12px;">Super Slow</span>
+                        <input type="range" id="animationSpeed" min="1" max="20" value="5" style="flex: 1; cursor: pointer;">
                         <span style="color: #666; font-size: 12px;">Fast</span>
                     </div>
                 </div>
@@ -614,6 +644,7 @@
 
             <button class="btn btn-primary" id="exportBtn">⬇️ Export as PNG</button>
             <button class="btn btn-primary" id="exportVideoBtn" style="display: none; background: linear-gradient(135deg, #e74c3c, #c0392b);">🎬 Export as Video</button>
+            <button class="btn btn-primary" id="exportAnimationBtn" style="display: none; background: linear-gradient(135deg, #9b59b6, #8e44ad);">🎬 Export Animation as Video</button>
             <button class="btn btn-secondary" id="resetBtn">🔄 Reset</button>
         </div>
 
@@ -755,8 +786,8 @@
                 height: 2752,
                 previewWidth: 380,
                 previewHeight: 507,
-                cornerRadius: 28,
-                screenCornerRadius: 24,
+                cornerRadius: 20,
+                screenCornerRadius: 18,
                 frameColor: 'space-black'
             },
             ipadpro11m4: {
@@ -766,8 +797,8 @@
                 height: 2388,
                 previewWidth: 340,
                 previewHeight: 487,
-                cornerRadius: 26,
-                screenCornerRadius: 22,
+                cornerRadius: 20,
+                screenCornerRadius: 18,
                 frameColor: 'space-black'
             },
             // iPad Pro M2 (2022)
@@ -778,8 +809,8 @@
                 height: 2732,
                 previewWidth: 375,
                 previewHeight: 500,
-                cornerRadius: 28,
-                screenCornerRadius: 24,
+                cornerRadius: 20,
+                screenCornerRadius: 18,
                 frameColor: 'space-gray'
             },
             ipadpro11m2: {
@@ -789,8 +820,8 @@
                 height: 2388,
                 previewWidth: 340,
                 previewHeight: 487,
-                cornerRadius: 26,
-                screenCornerRadius: 22,
+                cornerRadius: 20,
+                screenCornerRadius: 18,
                 frameColor: 'space-gray'
             },
             // iPad Air M2 (2024)
@@ -801,8 +832,8 @@
                 height: 2752,
                 previewWidth: 380,
                 previewHeight: 507,
-                cornerRadius: 28,
-                screenCornerRadius: 24,
+                cornerRadius: 20,
+                screenCornerRadius: 18,
                 frameColor: 'starlight'
             },
             ipadair11m2: {
@@ -812,8 +843,8 @@
                 height: 2360,
                 previewWidth: 335,
                 previewHeight: 482,
-                cornerRadius: 26,
-                screenCornerRadius: 22,
+                cornerRadius: 20,
+                screenCornerRadius: 18,
                 frameColor: 'starlight'
             },
             // iPad 10th Gen (2022)
@@ -824,8 +855,8 @@
                 height: 2360,
                 previewWidth: 335,
                 previewHeight: 482,
-                cornerRadius: 26,
-                screenCornerRadius: 22,
+                cornerRadius: 20,
+                screenCornerRadius: 18,
                 frameColor: 'silver'
             },
             // iPad mini 7 (2024)
@@ -836,8 +867,8 @@
                 height: 2266,
                 previewWidth: 300,
                 previewHeight: 457,
-                cornerRadius: 24,
-                screenCornerRadius: 20,
+                cornerRadius: 20,
+                screenCornerRadius: 18,
                 frameColor: 'starlight'
             }
         };
@@ -920,20 +951,72 @@
                 silentSwitch.style.display = (device.type === 'iphone' && !hasActionButton) ? 'block' : 'none';
             }
 
-            // Hide side buttons for iPads
+            // Update side buttons for device type
             const sideButtons = deviceFrame.querySelectorAll('.side-button');
-            sideButtons.forEach(btn => {
-                if (device.type === 'ipad') {
-                    btn.style.display = 'none';
-                } else {
-                    btn.style.display = 'block';
+            const powerBtn = deviceFrame.querySelector('.power-button');
+            const volUp = deviceFrame.querySelector('.volume-up');
+            const volDown = deviceFrame.querySelector('.volume-down');
+            const silentSw = document.getElementById('silentSwitch');
+
+            if (device.type === 'ipad') {
+                // iPad: power button on top, volume on right side
+                if (powerBtn) {
+                    powerBtn.style.display = 'block';
+                    powerBtn.style.right = 'auto';
+                    powerBtn.style.left = '15%';
+                    powerBtn.style.top = '-3px';
+                    powerBtn.style.width = '60px';
+                    powerBtn.style.height = '3px';
                 }
-            });
+                if (volUp) {
+                    volUp.style.display = 'block';
+                    volUp.style.left = 'auto';
+                    volUp.style.right = '-3px';
+                    volUp.style.top = '12%';
+                    volUp.style.width = '3px';
+                    volUp.style.height = '35px';
+                }
+                if (volDown) {
+                    volDown.style.display = 'block';
+                    volDown.style.left = 'auto';
+                    volDown.style.right = '-3px';
+                    volDown.style.top = '20%';
+                    volDown.style.width = '3px';
+                    volDown.style.height = '35px';
+                }
+                if (silentSw) silentSw.style.display = 'none';
+            } else {
+                // iPhone: restore default positions
+                if (powerBtn) {
+                    powerBtn.style.display = 'block';
+                    powerBtn.style.left = 'auto';
+                    powerBtn.style.right = '-3px';
+                    powerBtn.style.top = '22%';
+                    powerBtn.style.width = '3px';
+                    powerBtn.style.height = '60px';
+                }
+                if (volUp) {
+                    volUp.style.display = 'block';
+                    volUp.style.right = 'auto';
+                    volUp.style.left = '-3px';
+                    volUp.style.top = '18%';
+                    volUp.style.width = '3px';
+                    volUp.style.height = '35px';
+                }
+                if (volDown) {
+                    volDown.style.display = 'block';
+                    volDown.style.right = 'auto';
+                    volDown.style.left = '-3px';
+                    volDown.style.top = '28%';
+                    volDown.style.width = '3px';
+                    volDown.style.height = '35px';
+                }
+            }
 
             // Update preview container size based on device
             if (device.type === 'ipad') {
-                previewContainer.style.width = `${device.previewWidth + 80}px`;
-                previewContainer.style.height = `${device.previewHeight + 280}px`;
+                previewContainer.style.width = `${device.previewWidth + 100}px`;
+                previewContainer.style.height = `${device.previewHeight + 320}px`;
             } else {
                 previewContainer.style.width = '400px';
                 previewContainer.style.height = '800px';
@@ -945,7 +1028,9 @@
 
         function updateScreenContent() {
             const device = currentDevice;
-            const homeIndicatorHTML = (device.type === 'iphone' && showHomeIndicator) ? '<div class="home-indicator" id="homeIndicator"></div>' : '';
+            // Home indicator works on both iPhone and iPad
+            const homeIndicatorHTML = showHomeIndicator ? '<div class="home-indicator" id="homeIndicator"></div>' : '';
+            // Dynamic Island only on iPhones
             const dynamicIslandHTML = (device.type === 'iphone' && showDynamicIsland && device.dynamicIsland) ?
                 `<div class="dynamic-island" id="dynamicIsland" style="display:block;width:${device.dynamicIsland.width}px;height:${device.dynamicIsland.height}px;border-radius:${device.dynamicIsland.height/2}px;"></div>` : '';
 
@@ -976,8 +1061,9 @@
         function updateAnimation() {
             // Remove all animation classes
             deviceFrame.classList.remove(
-                'animate-zoom-in', 'animate-zoom-out', 'animate-spin',
-                'animate-float', 'animate-tilt', 'animate-zoom-spin', 'animate-zoom-float'
+                'animate-zoom-in', 'animate-zoom-out', 'animate-super-zoom-in', 'animate-super-zoom-out',
+                'animate-spin', 'animate-float', 'animate-tilt', 'animate-zoom-spin', 'animate-zoom-float',
+                'animate-float-tilt', 'animate-float-spin'
             );
 
             // Add new animation class if not 'none'
@@ -985,15 +1071,32 @@
                 deviceFrame.classList.add(`animate-${currentAnimation}`);
             }
 
-            // Set animation duration based on speed (1=slow 6s, 10=fast 1s)
-            const duration = 7 - (animationSpeed * 0.6); // Range: 6.4s to 1s
+            // Set animation duration based on speed (1=super slow 30s, 20=fast 1s)
+            // Exponential curve favoring slow speeds for creative ads
+            const duration = 30 / Math.pow(animationSpeed, 0.85); // Range: ~30s to ~1s
             deviceFrame.style.animationDuration = `${duration}s`;
         }
 
         document.getElementById('animationType').addEventListener('change', (e) => {
             currentAnimation = e.target.value;
             updateAnimation();
+            updateExportButtons();
         });
+
+        function updateExportButtons() {
+            const exportBtn = document.getElementById('exportBtn');
+            const exportAnimationBtn = document.getElementById('exportAnimationBtn');
+
+            if (currentAnimation !== 'none') {
+                // Animation is active - show animation export, hide PNG export
+                exportBtn.style.display = 'none';
+                exportAnimationBtn.style.display = 'block';
+            } else {
+                // No animation - show PNG export, hide animation export
+                exportBtn.style.display = 'block';
+                exportAnimationBtn.style.display = 'none';
+            }
+        }
 
         document.getElementById('animationSpeed').addEventListener('input', (e) => {
             animationSpeed = parseInt(e.target.value);
@@ -1103,65 +1206,27 @@
             reader.readAsDataURL(file);
         }
 
-        // Export frame colors for canvas (darker silver tones)
-        const canvasFrameColors = {
-            titanium: { light: '#7a7a7a', mid: '#4a4a4a', dark: '#5a5a5a' },
-            aluminum: { light: '#8a8a8a', mid: '#5a5a5a', dark: '#6a6a6a' },
-            'space-black': { light: '#3a3a3a', mid: '#1a1a1a', dark: '#2a2a2a' },
-            'space-gray': { light: '#5a5a5a', mid: '#3a3a3a', dark: '#4a4a4a' },
-            silver: { light: '#8a8a8a', mid: '#5a5a5a', dark: '#6a6a6a' },
-            starlight: { light: '#8a8580', mid: '#5a5550', dark: '#6a6560' }
-        };
-
         // Export - capture the exact preview using html2canvas
         exportBtn.addEventListener('click', async () => {
             const device = currentDevice;
-
-            // Capture the preview container exactly as it appears
             const previewEl = document.getElementById('previewContainer');
 
-            // Calculate scale to match device export resolution
-            const scaleX = device.width / previewEl.offsetWidth;
-            const scaleY = device.height / previewEl.offsetHeight;
-            const scale = Math.max(scaleX, scaleY);
-
             try {
+                // Just capture the preview exactly as it appears
                 const canvas = await html2canvas(previewEl, {
-                    scale: scale,
+                    scale: 4,
                     backgroundColor: null,
                     useCORS: true,
                     allowTaint: true,
                     logging: false
                 });
 
-                // Create final canvas at exact device dimensions
-                const finalCanvas = document.getElementById('exportCanvas');
-                finalCanvas.width = device.width;
-                finalCanvas.height = device.height;
-                const ctx = finalCanvas.getContext('2d');
-
-                // Fill background
-                const color = accentColor.value;
-                const r = parseInt(color.slice(1,3), 16);
-                const g = parseInt(color.slice(3,5), 16);
-                const b = parseInt(color.slice(5,7), 16);
-
-                const gradient = ctx.createLinearGradient(0, 0, 0, finalCanvas.height);
-                gradient.addColorStop(0, '#1a1a1a');
-                gradient.addColorStop(0.5, `rgba(${r},${g},${b},0.3)`);
-                gradient.addColorStop(1, '#1a1a1a');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-                // Draw captured preview centered
-                const drawWidth = canvas.width;
-                const drawHeight = canvas.height;
-                const x = (finalCanvas.width - drawWidth) / 2;
-                const y = (finalCanvas.height - drawHeight) / 2;
-
-                ctx.drawImage(canvas, x, y);
-
-                downloadCanvas(finalCanvas, device.name);
+                // Download exactly what was captured
+                const link = document.createElement('a');
+                const safeName = device.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                link.download = `screenshot-${safeName}-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             } catch (err) {
                 console.error('Export failed:', err);
                 alert('Export failed. Please try again.');
@@ -1174,39 +1239,6 @@
             link.download = `screenshot-${safeName}-${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-        }
-
-        function wrapText(ctx, text, maxWidth) {
-            const words = text.split(' ');
-            const lines = [];
-            let currentLine = '';
-
-            words.forEach(word => {
-                const testLine = currentLine + (currentLine ? ' ' : '') + word;
-                const metrics = ctx.measureText(testLine);
-                if (metrics.width > maxWidth && currentLine) {
-                    lines.push(currentLine);
-                    currentLine = word;
-                } else {
-                    currentLine = testLine;
-                }
-            });
-            if (currentLine) lines.push(currentLine);
-            return lines;
-        }
-
-        function roundRect(ctx, x, y, width, height, radius) {
-            ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-            ctx.lineTo(x + radius, y + height);
-            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
-            ctx.closePath();
         }
 
         // Video controls
@@ -1236,10 +1268,11 @@
             }
         });
 
-        // Video export - render frames to canvas at full device resolution
+        // Video export - capture exact preview
         exportVideoBtn.addEventListener('click', async () => {
             const device = currentDevice;
             const video = document.getElementById('previewVideo');
+            const previewEl = document.getElementById('previewContainer');
 
             if (!video) {
                 alert('No video loaded');
@@ -1249,34 +1282,21 @@
             exportVideoBtn.textContent = '⏳ Preparing...';
             exportVideoBtn.disabled = true;
 
-            // Create high-res canvas at device resolution
+            // Get preview size and create canvas at same aspect ratio but higher res
+            const previewWidth = previewEl.offsetWidth;
+            const previewHeight = previewEl.offsetHeight;
+            const scale = 4;
+
             const canvas = document.createElement('canvas');
-            canvas.width = device.width;
-            canvas.height = device.height;
+            canvas.width = previewWidth * scale;
+            canvas.height = previewHeight * scale;
             const ctx = canvas.getContext('2d');
 
-            // Calculate scaling from preview to export
-            const scale = device.width / 400; // preview container is 400px
-
-            // Pre-calculate accent color
-            const color = accentColor.value;
-            const r = parseInt(color.slice(1,3), 16);
-            const g = parseInt(color.slice(3,5), 16);
-            const b = parseInt(color.slice(5,7), 16);
-
-            // Phone dimensions scaled up
-            const phoneWidth = device.previewWidth * scale;
-            const phoneHeight = device.previewHeight * scale;
-            const phoneX = (canvas.width - phoneWidth) / 2;
-            const phoneRadius = device.cornerRadius * scale;
-            const phoneBorder = 2 * scale;
-            const screenRadius = device.screenCornerRadius * scale;
-
-            // Set up MediaRecorder at high bitrate
+            // Set up MediaRecorder
             const stream = canvas.captureStream(60);
             const mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm;codecs=vp9',
-                videoBitsPerSecond: 20000000 // 20 Mbps for high quality
+                videoBitsPerSecond: 20000000
             });
 
             const chunks = [];
@@ -1302,7 +1322,6 @@
             video.muted = true;
             video.loop = false;
 
-            // Wait for video to be ready
             await new Promise(resolve => {
                 if (video.readyState >= 2) resolve();
                 else video.oncanplay = resolve;
@@ -1312,137 +1331,121 @@
             exportVideoBtn.textContent = '⏳ Recording...';
             video.play();
 
-            // Pre-calculate static elements
-            const titleText = titleInput.value || 'Title';
-            const titleWords = titleText.split(' ');
-            const subtitleText = subtitleInput.value || 'Subtitle';
-
             let isRecording = true;
 
-            // Draw frame function - renders preview exactly at high res
-            const drawFrame = () => {
+            const captureFrame = async () => {
                 if (!isRecording || video.ended || video.paused) {
                     return;
                 }
 
-                // Clear and draw background gradient
-                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                gradient.addColorStop(0, '#1a1a1a');
-                gradient.addColorStop(0.5, `rgba(${r},${g},${b},0.3)`);
-                gradient.addColorStop(1, '#1a1a1a');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                try {
+                    const capturedCanvas = await html2canvas(previewEl, {
+                        scale: scale,
+                        backgroundColor: null,
+                        useCORS: true,
+                        allowTaint: true,
+                        logging: false
+                    });
 
-                // Title - scaled up
-                ctx.fillStyle = '#ffffff';
-                ctx.font = `800 ${Math.round(36 * scale)}px -apple-system, BlinkMacSystemFont, sans-serif`;
-                ctx.textAlign = 'center';
-                let titleY = Math.round(40 * scale);
-                titleWords.forEach(word => {
-                    ctx.fillText(word, canvas.width / 2, titleY);
-                    titleY += Math.round(40 * scale);
-                });
+                    // Draw exactly as captured
+                    ctx.drawImage(capturedCanvas, 0, 0);
 
-                // Subtitle
-                ctx.fillStyle = '#cccccc';
-                ctx.font = `${Math.round(14 * scale)}px -apple-system, BlinkMacSystemFont, sans-serif`;
-                const subtitleLines = wrapText(ctx, subtitleText, 320 * scale);
-                let subtitleY = titleY + Math.round(12 * scale);
-                subtitleLines.forEach((line, i) => {
-                    ctx.fillText(line, canvas.width / 2, subtitleY + (i * Math.round(18 * scale)));
-                });
-                const contentEndY = subtitleY + (subtitleLines.length * Math.round(18 * scale));
-
-                // Phone position
-                const phoneY = contentEndY + Math.round(30 * scale);
-
-                // Draw metallic frame
-                const metalGradient = ctx.createLinearGradient(phoneX, phoneY, phoneX + phoneWidth, phoneY);
-                metalGradient.addColorStop(0, '#8a8a8a');
-                metalGradient.addColorStop(0.2, '#5a5a5a');
-                metalGradient.addColorStop(0.5, '#4a4a4a');
-                metalGradient.addColorStop(0.8, '#5a5a5a');
-                metalGradient.addColorStop(1, '#8a8a8a');
-                ctx.fillStyle = metalGradient;
-                roundRect(ctx, phoneX, phoneY, phoneWidth, phoneHeight, phoneRadius);
-                ctx.fill();
-
-                // Side buttons
-                if (device.type === 'iphone') {
-                    ctx.fillStyle = '#5a5a5a';
-                    // Power button
-                    roundRect(ctx, phoneX + phoneWidth, phoneY + phoneHeight * 0.22, 3 * scale, 60 * scale, 2);
-                    ctx.fill();
-                    // Volume up
-                    roundRect(ctx, phoneX - 3 * scale, phoneY + phoneHeight * 0.18, 3 * scale, 35 * scale, 2);
-                    ctx.fill();
-                    // Volume down
-                    roundRect(ctx, phoneX - 3 * scale, phoneY + phoneHeight * 0.28, 3 * scale, 35 * scale, 2);
-                    ctx.fill();
-                }
-
-                // Inner black bezel
-                const innerX = phoneX + phoneBorder;
-                const innerY = phoneY + phoneBorder;
-                const innerWidth = phoneWidth - phoneBorder * 2;
-                const innerHeight = phoneHeight - phoneBorder * 2;
-                const innerRadius = phoneRadius - phoneBorder;
-                ctx.fillStyle = '#000000';
-                roundRect(ctx, innerX, innerY, innerWidth, innerHeight, innerRadius);
-                ctx.fill();
-
-                // Screen area
-                const screenX = innerX;
-                const screenY = innerY;
-                const screenWidth = innerWidth;
-                const screenHeight = innerHeight;
-
-                // Draw video frame
-                ctx.save();
-                roundRect(ctx, screenX, screenY, screenWidth, screenHeight, screenRadius);
-                ctx.clip();
-                ctx.drawImage(video, screenX, screenY, screenWidth, screenHeight);
-                ctx.restore();
-
-                // Dynamic Island
-                if (showDynamicIsland && device.type === 'iphone' && device.dynamicIsland) {
-                    const diWidth = device.dynamicIsland.width * scale;
-                    const diHeight = device.dynamicIsland.height * scale;
-                    const diX = screenX + (screenWidth - diWidth) / 2;
-                    const diY = screenY + 14 * scale;
-                    ctx.fillStyle = '#000000';
-                    roundRect(ctx, diX, diY, diWidth, diHeight, diHeight / 2);
-                    ctx.fill();
-                }
-
-                // Home indicator
-                if (showHomeIndicator && device.type === 'iphone') {
-                    const hiWidth = 120 * scale;
-                    const hiHeight = 5 * scale;
-                    const hiX = screenX + (screenWidth - hiWidth) / 2;
-                    const hiY = screenY + screenHeight - 8 * scale - hiHeight;
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                    roundRect(ctx, hiX, hiY, hiWidth, hiHeight, hiHeight / 2);
-                    ctx.fill();
+                    setTimeout(captureFrame, 33);
+                } catch (err) {
+                    console.error('Frame capture failed:', err);
+                    setTimeout(captureFrame, 33);
                 }
             };
 
-            // Use setInterval for consistent 60fps (16.67ms per frame)
-            const frameInterval = setInterval(() => {
-                if (video.ended || video.paused) {
-                    clearInterval(frameInterval);
-                    isRecording = false;
-                    setTimeout(() => mediaRecorder.stop(), 100);
-                } else {
-                    drawFrame();
-                }
-            }, 1000 / 60); // 60 FPS
+            captureFrame();
 
             video.onended = () => {
-                clearInterval(frameInterval);
                 isRecording = false;
                 setTimeout(() => mediaRecorder.stop(), 200);
             };
+        });
+
+        // Animation Export - captures the animated preview as video
+        const exportAnimationBtn = document.getElementById('exportAnimationBtn');
+        exportAnimationBtn.addEventListener('click', async () => {
+            const device = currentDevice;
+            const previewEl = document.getElementById('previewContainer');
+
+            exportAnimationBtn.textContent = '⏳ Preparing...';
+            exportAnimationBtn.disabled = true;
+
+            // Calculate animation duration
+            const duration = 30 / Math.pow(animationSpeed, 0.85);
+            const recordingDuration = Math.min(duration * 1000, 15000);
+
+            // Get preview size and create canvas at same aspect ratio but higher res
+            const previewWidth = previewEl.offsetWidth;
+            const previewHeight = previewEl.offsetHeight;
+            const scale = 4;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = previewWidth * scale;
+            canvas.height = previewHeight * scale;
+            const ctx = canvas.getContext('2d');
+
+            // Set up MediaRecorder
+            const stream = canvas.captureStream(60);
+            const mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: 20000000
+            });
+
+            const chunks = [];
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) chunks.push(e.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                const safeName = device.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                link.download = `animation-${safeName}-${Date.now()}.webm`;
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+                exportAnimationBtn.textContent = '🎬 Export Animation as Video';
+                exportAnimationBtn.disabled = false;
+            };
+
+            mediaRecorder.start();
+            exportAnimationBtn.textContent = '⏳ Recording...';
+
+            const startTime = Date.now();
+
+            const captureFrame = async () => {
+                const elapsed = Date.now() - startTime;
+
+                if (elapsed >= recordingDuration) {
+                    setTimeout(() => mediaRecorder.stop(), 100);
+                    return;
+                }
+
+                try {
+                    const capturedCanvas = await html2canvas(previewEl, {
+                        scale: scale,
+                        backgroundColor: null,
+                        useCORS: true,
+                        allowTaint: true,
+                        logging: false
+                    });
+
+                    // Draw exactly as captured
+                    ctx.drawImage(capturedCanvas, 0, 0);
+
+                    setTimeout(captureFrame, 33);
+                } catch (err) {
+                    console.error('Frame capture failed:', err);
+                    setTimeout(captureFrame, 33);
+                }
+            };
+
+            captureFrame();
         });
 
         // Reset
@@ -1468,6 +1471,7 @@
             document.getElementById('animationType').value = 'none';
             document.getElementById('animationSpeed').value = 5;
             updateAnimation();
+            updateExportButtons();
             // Reset overlays
             showHomeIndicator = true;
             showDynamicIsland = true;
@@ -1479,6 +1483,7 @@
         // Initialize
         updateAccentColor('#f5a623');
         updateDevicePreview();
+        updateExportButtons();
     </script>
 </body>
 </html>
